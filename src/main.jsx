@@ -36,20 +36,20 @@ const HABITS = {
 };
 
 const DIAGNOSTIC_AREAS = [
-  { id: 'higiene', icon: '🪥', label: 'Higiene e autocuidado', habit: ['Escovar os dentes pela manhã', '🪥'] },
-  { id: 'organizacao', icon: '🧸', label: 'Organização das próprias coisas', habit: ['Guardar os brinquedos', '🧸'] },
-  { id: 'estudos', icon: '📚', label: 'Estudos e tarefas escolares', habit: ['Começar a tarefa no horário', '✏️'] },
-  { id: 'horarios', icon: '⏰', label: 'Cumprimento de horários', habit: ['Preparar-se no horário combinado', '⏰'] },
-  { id: 'manha', icon: '🌅', label: 'Rotina da manhã', habit: ['Arrumar a cama ao acordar', '🌅'] },
-  { id: 'sono', icon: '🌙', label: 'Rotina noturna e sono', habit: ['Guardar as telas antes de dormir', '🌙'] },
-  { id: 'alimentacao', icon: '🍎', label: 'Alimentação', habit: ['Beber água ao longo do dia', '🍎'] },
-  { id: 'telas', icon: '📱', label: 'Uso equilibrado de telas', habit: ['Guardar as telas no horário combinado', '📵'] },
-  { id: 'casa', icon: '🏡', label: 'Participação nas tarefas da casa', habit: ['Ajudar em uma tarefa da casa', '🏡'] },
-  { id: 'responsabilidade', icon: '🌟', label: 'Independência e responsabilidade', habit: ['Cuidar dos próprios pertences', '🌟'] },
-  { id: 'familia', icon: '🤝', label: 'Convivência familiar', habit: ['Participar de um momento em família', '🤝'] },
-  { id: 'emocoes', icon: '💛', label: 'Reconhecimento e regulação das emoções', habit: ['Contar como está se sentindo', '💛'] },
-  { id: 'persistencia', icon: '💪', label: 'Persistência diante de dificuldades', habit: ['Tentar novamente antes de desistir', '💪'] },
-  { id: 'outro', icon: '✏️', label: 'Outro', habit: ['Novo hábito personalizado', '✏️'] },
+  { id: 'repeticao', icon: '🔁', label: 'Repito tudo várias vezes', habit: ['Seguir o próximo passo da rotina', '✅'] },
+  { id: 'manha', icon: '🌅', label: 'As manhãs são uma correria', habit: ['Arrumar a cama ao acordar', '🌅'] },
+  { id: 'sono', icon: '🌙', label: 'A hora de dormir vira conflito', habit: ['Guardar as telas antes de dormir', '🌙'] },
+  { id: 'estudos', icon: '📚', label: 'Tarefas e estudos geram estresse', habit: ['Começar a tarefa no horário', '✏️'] },
+  { id: 'emocoes', icon: '💛', label: 'Frustrações viram grandes conflitos', habit: ['Contar como está se sentindo', '💛'] },
+  { id: 'sobrecarga', icon: '😮‍💨', label: 'Tudo parece depender de mim', habit: ['Ajudar em uma tarefa da casa', '🏡'] },
+  { id: 'responsabilidade', icon: '🌱', label: 'Quero mais autonomia no dia a dia', habit: ['Cuidar dos próprios pertences', '🌱'] },
+  { id: 'telas', icon: '📱', label: 'Está difícil equilibrar as telas', habit: ['Guardar as telas no horário combinado', '📵'] },
+  { id: 'alimentacao', icon: '🍎', label: 'As refeições são um desafio', habit: ['Beber água ao longo do dia', '🍎'] },
+  { id: 'organizacao', icon: '🧸', label: 'Organizar as coisas vira uma luta', habit: ['Guardar os brinquedos', '🧸'] },
+  { id: 'horarios', icon: '⏰', label: 'Cumprir horários é difícil', habit: ['Preparar-se no horário combinado', '⏰'] },
+  { id: 'casa', icon: '🏡', label: 'Quero mais colaboração em casa', habit: ['Ajudar em uma tarefa da casa', '🏡'] },
+  { id: 'familia', icon: '🤝', label: 'Quero mais leveza em família', habit: ['Participar de um momento em família', '🤝'] },
+  { id: 'outro', icon: '✏️', label: 'Outra situação', habit: ['Novo hábito personalizado', '✏️'] },
 ];
 
 const MOTIVATIONS = [
@@ -164,9 +164,8 @@ function ChildProfile({ profile, setProfile, onNext, onBack }) {
 
 function Priorities({ selected, setSelected, otherValue, setOtherValue, onNext, onBack }) {
   const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
-  const needsOtherDescription = selected.includes('outro') && !otherValue.trim();
   return (
-    <StepShell step={1} eyebrow="Vamos começar pelo que importa" title="O que você mais gostaria de melhorar na rotina da sua criança?" subtitle="Escolha pelo menos três áreas. Você pode selecionar quantas quiser." onBack={onBack} onNext={onNext} nextDisabled={selected.length < 3 || needsOtherDescription} helper={selected.length < 3 ? `${selected.length} de 3 selecionadas` : `${selected.length} ${selected.length === 1 ? 'selecionada' : 'selecionadas'}`}>
+    <StepShell step={1} eyebrow="Vamos começar por você" title="O que está pesando mais na rotina da sua família?" subtitle="Escolha tudo o que fizer sentido hoje." onBack={onBack} onNext={onNext} nextDisabled={!selected.length} helper={selected.length ? `${selected.length} ${selected.length === 1 ? 'escolha' : 'escolhas'}` : 'Escolha pelo menos uma opção'}>
       <div className="diagnostic-options">
         {DIAGNOSTIC_AREAS.map((area) => {
           const active = selected.includes(area.id);
@@ -187,8 +186,8 @@ function Priorities({ selected, setSelected, otherValue, setOtherValue, onNext, 
       </div>
       {selected.includes('outro') && (
         <div className="diagnostic-other">
-          <label className="field-label" htmlFor="other-priority">O que você gostaria de melhorar?</label>
-          <input id="other-priority" className="text-input" value={otherValue} onChange={(event) => setOtherValue(event.target.value)} placeholder="Ex.: preparar-se para sair de casa" />
+          <label className="field-label" htmlFor="other-priority">Quer nos contar mais? <span className="optional">Opcional</span></label>
+          <input id="other-priority" className="text-input" value={otherValue} onChange={(event) => setOtherValue(event.target.value)} placeholder="Conte do seu jeito" />
         </div>
       )}
     </StepShell>
@@ -212,6 +211,7 @@ function Routine({ diagnosis, diagnosisOther, profile, onNext, onBack }) {
     const selectedHabits = diagnosis.map((id) => {
       const area = DIAGNOSTIC_AREAS.find((item) => item.id === id);
       if (!area) return null;
+      if (id === 'outro' && !diagnosisOther.trim()) return null;
       const [defaultName, icon] = area.habit;
       return [id === 'outro' && diagnosisOther.trim() ? diagnosisOther.trim() : defaultName, icon];
     }).filter(Boolean);
