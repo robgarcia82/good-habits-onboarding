@@ -153,7 +153,7 @@ function ChildProfile({ profile, setProfile, onNext, onBack }) {
 
 function QuickScan({ goals, answers, setAnswers, profile, onNext, onBack }) {
   const habits = useMemo(() => goals.flatMap((goal) => HABITS[goal] || []).slice(0, 6), [goals]);
-  const sliderOptions = [
+  const options = [
     { id: 'not-yet', label: 'Ainda não' },
     { id: 'help', label: 'Com ajuda' },
     { id: 'alone', label: 'Sozinho' },
@@ -163,32 +163,22 @@ function QuickScan({ goals, answers, setAnswers, profile, onNext, onBack }) {
     <StepShell step={3} eyebrow="Diagnóstico rápido" title={`Como estão esses hábitos de ${profile.name || 'sua criança'}?`} subtitle="Esta etapa é essencial para criarmos uma rotina que respeite o momento e o nível de autonomia do seu filho. Não existe resposta certa ou errada — em menos de 1 minuto, você nos ajuda a personalizar cada hábito." onBack={onBack} onNext={onNext} nextDisabled={answered < Math.min(3, habits.length)} helper={`${answered} de ${habits.length} respondidos`}>
       <div className="scan-list">
         {habits.map(([habit, icon]) => {
-          const selectedIndex = sliderOptions.findIndex((option) => option.id === answers[habit]);
-          const sliderValue = selectedIndex >= 0 ? selectedIndex : 1;
-          const selectedLabel = selectedIndex >= 0 ? sliderOptions[selectedIndex].label : 'Deslize para responder';
+          const selected = answers[habit];
 
-          return <div className={`habit-row ${selectedIndex >= 0 ? 'answered' : ''}`} key={habit}>
-            <div className="habit-slider-top">
-              <div className="habit-title"><span>{icon}</span><strong>{habit}</strong></div>
-              <span className={`slider-answer ${selectedIndex >= 0 ? 'active' : ''}`}>{selectedLabel}</span>
-            </div>
-            <input
-              aria-label={`Nível de autonomia para ${habit}`}
-              aria-valuetext={selectedLabel}
-              className={`habit-slider ${selectedIndex >= 0 ? 'answered' : ''}`}
-              type="range"
-              min="0"
-              max="2"
-              step="1"
-              value={sliderValue}
-              style={{ '--slider-progress': `${sliderValue * 50}%` }}
-              onPointerDown={() => {
-                if (selectedIndex < 0) setAnswers({ ...answers, [habit]: 'help' });
-              }}
-              onChange={(event) => setAnswers({ ...answers, [habit]: sliderOptions[Number(event.target.value)].id })}
-            />
-            <div className="slider-labels" aria-hidden="true">
-              {sliderOptions.map((option) => <span key={option.id}>{option.label}</span>)}
+          return <div className={`habit-row ${selected ? 'answered' : ''}`} key={habit}>
+            <div className="habit-title"><span>{icon}</span><strong>{habit}</strong></div>
+            <div className="segment-control" role="group" aria-label={`Nível de autonomia para ${habit}`}>
+              {options.map((option) => (
+                <button
+                  type="button"
+                  key={option.id}
+                  className={selected === option.id ? 'selected' : ''}
+                  aria-pressed={selected === option.id}
+                  onClick={() => setAnswers({ ...answers, [habit]: option.id })}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
           </div>;
         })}
