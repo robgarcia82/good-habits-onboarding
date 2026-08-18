@@ -205,7 +205,7 @@ function Routine({ goals, answers, profile, onNext, onBack }) {
     <StepShell step={5} eyebrow="Pronto para começar" title={`Criamos uma primeira rotina para ${profile.name || 'sua criança'}`} subtitle="Baseada nas suas respostas, ela começa simples e evolui com a família." onBack={onBack} onNext={onNext} nextLabel="Aprovar esta rotina">
       <div className="routine-summary"><div><span className="big-avatar">{profile.avatar}</span><span><strong>{routine.length} hábitos</strong><small>aprox. 15 min por dia</small></span></div><span className="status-pill">Equilibrada</span></div>
       <div className="routine-list">
-        {routine.map((item) => <div className="routine-item" key={item.name}><span className="routine-icon">{item.icon}</span><span className="routine-copy"><strong>{item.name}</strong><small>{item.time} · Todos os dias</small></span><span className="points">+{item.points} pts</span><button className="more-button" type="button" aria-label={`Editar ${item.name}`}>•••</button></div>)}
+        {routine.map((item) => <div className="routine-item" key={item.name}><span className="routine-icon">{item.icon}</span><span className="routine-copy"><strong>{item.name}</strong><small>{item.time} · Todos os dias</small></span><span className="points">+{item.points} pts</span><button className="edit-button" type="button" aria-label={`Editar ${item.name}`} title={`Editar ${item.name}`}><span aria-hidden="true">✎</span></button></div>)}
       </div>
       <button type="button" className="add-button">＋ Adicionar outro hábito</button>
       <div className="insight-box mint"><span>🌱</span><p><strong>Comece pequeno.</strong><br />Você poderá ajustar a rotina a qualquer momento.</p></div>
