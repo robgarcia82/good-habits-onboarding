@@ -35,7 +35,7 @@ const HABITS = {
   ],
 };
 
-const DIAGNOSTIC_AREAS = [
+const PARENT_PAIN_OPTIONS = [
   { id: 'repeticao', icon: '🔁', label: 'Repito tudo várias vezes', habit: ['Seguir o próximo passo da rotina', '✅'] },
   { id: 'manha', icon: '🌅', label: 'As manhãs são uma correria', habit: ['Arrumar a cama ao acordar', '🌅'] },
   { id: 'sono', icon: '🌙', label: 'A hora de dormir vira conflito', habit: ['Guardar as telas antes de dormir', '🌙'] },
@@ -50,6 +50,23 @@ const DIAGNOSTIC_AREAS = [
   { id: 'casa', icon: '🏡', label: 'Quero mais colaboração em casa', habit: ['Ajudar em uma tarefa da casa', '🏡'] },
   { id: 'familia', icon: '🤝', label: 'Quero mais leveza em família', habit: ['Participar de um momento em família', '🤝'] },
   { id: 'outro', icon: '✏️', label: 'Outra situação', habit: ['Novo hábito personalizado', '✏️'] },
+];
+
+const DIAGNOSTIC_AREAS = [
+  { id: 'higiene', icon: '🪥', label: 'Higiene e autocuidado', habit: ['Escovar os dentes pela manhã', '🪥'] },
+  { id: 'organizacao', icon: '🧸', label: 'Organização das próprias coisas', habit: ['Guardar os brinquedos', '🧸'] },
+  { id: 'estudos', icon: '📚', label: 'Estudos e tarefas escolares', habit: ['Começar a tarefa no horário', '✏️'] },
+  { id: 'horarios', icon: '⏰', label: 'Cumprimento de horários', habit: ['Preparar-se no horário combinado', '⏰'] },
+  { id: 'manha', icon: '🌅', label: 'Rotina da manhã', habit: ['Arrumar a cama ao acordar', '🌅'] },
+  { id: 'sono', icon: '🌙', label: 'Rotina noturna e sono', habit: ['Guardar as telas antes de dormir', '🌙'] },
+  { id: 'alimentacao', icon: '🍎', label: 'Alimentação', habit: ['Beber água ao longo do dia', '🍎'] },
+  { id: 'telas', icon: '📱', label: 'Uso equilibrado de telas', habit: ['Guardar as telas no horário combinado', '📵'] },
+  { id: 'casa', icon: '🏡', label: 'Participação nas tarefas da casa', habit: ['Ajudar em uma tarefa da casa', '🏡'] },
+  { id: 'responsabilidade', icon: '🌟', label: 'Independência e responsabilidade', habit: ['Cuidar dos próprios pertences', '🌟'] },
+  { id: 'familia', icon: '🤝', label: 'Convivência familiar', habit: ['Participar de um momento em família', '🤝'] },
+  { id: 'emocoes', icon: '💛', label: 'Reconhecimento e regulação das emoções', habit: ['Contar como está se sentindo', '💛'] },
+  { id: 'persistencia', icon: '💪', label: 'Persistência diante de dificuldades', habit: ['Tentar novamente antes de desistir', '💪'] },
+  { id: 'outro', icon: '✏️', label: 'Outro ponto', habit: ['Novo hábito personalizado', '✏️'] },
 ];
 
 const MOTIVATIONS = [
@@ -82,12 +99,12 @@ function Check({ active }) {
 }
 
 function StepShell({ step, title, eyebrow, subtitle, children, onBack, onNext, nextLabel = 'Continuar', nextDisabled = false, helper }) {
-  const progress = Math.max(0, Math.min(100, (step / 4) * 100));
+  const progress = Math.max(0, Math.min(100, (step / 5) * 100));
   return (
     <main className="app-shell">
       <div className="topbar">
         <BackButton onClick={onBack} />
-        <span className="step-count">Etapa {step} de 4</span>
+        <span className="step-count">Etapa {step} de 5</span>
         <button className="text-button" type="button" onClick={onNext}>Responder depois</button>
       </div>
       <div className="progress-track" aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
@@ -162,28 +179,28 @@ function ChildProfile({ profile, setProfile, onNext, onBack }) {
   );
 }
 
+function SelectionCards({ options, selected, onToggle }) {
+  return (
+    <div className="diagnostic-options">
+      {options.map((area) => {
+        const active = selected.includes(area.id);
+        return (
+          <button type="button" className={`diagnostic-chip ${active ? 'selected' : ''}`} key={area.id} onClick={() => onToggle(area.id)} aria-pressed={active}>
+            <span className="diagnostic-emoji" aria-hidden="true">{area.icon}</span>
+            <span>{area.label}</span>
+            <Check active={active} />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function Priorities({ selected, setSelected, otherValue, setOtherValue, onNext, onBack }) {
   const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   return (
     <StepShell step={1} eyebrow="Vamos começar por você" title="O que está pesando mais na rotina da sua família?" subtitle="Escolha tudo o que fizer sentido hoje." onBack={onBack} onNext={onNext} nextDisabled={!selected.length} helper={selected.length ? `${selected.length} ${selected.length === 1 ? 'escolha' : 'escolhas'}` : 'Escolha pelo menos uma opção'}>
-      <div className="diagnostic-options">
-        {DIAGNOSTIC_AREAS.map((area) => {
-          const active = selected.includes(area.id);
-          return (
-            <button
-              type="button"
-              className={`diagnostic-chip ${active ? 'selected' : ''}`}
-              key={area.id}
-              onClick={() => toggle(area.id)}
-              aria-pressed={active}
-            >
-              <span className="diagnostic-emoji" aria-hidden="true">{area.icon}</span>
-              <span>{area.label}</span>
-              <Check active={active} />
-            </button>
-          );
-        })}
-      </div>
+      <SelectionCards options={PARENT_PAIN_OPTIONS} selected={selected} onToggle={toggle} />
       {selected.includes('outro') && (
         <div className="diagnostic-other">
           <label className="field-label" htmlFor="other-priority">Quer nos contar mais? <span className="optional">Opcional</span></label>
@@ -194,10 +211,26 @@ function Priorities({ selected, setSelected, otherValue, setOtherValue, onNext, 
   );
 }
 
+function ChildPriorities({ selected, setSelected, otherValue, setOtherValue, profile, onNext, onBack }) {
+  const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+  const needsOtherDescription = selected.includes('outro') && !otherValue.trim();
+  return (
+    <StepShell step={3} eyebrow="Agora, sobre sua criança" title={`O que você gostaria de desenvolver na rotina de ${profile.name || 'sua criança'}?`} subtitle="Escolha pelo menos três áreas. Você pode selecionar quantas quiser." onBack={onBack} onNext={onNext} nextDisabled={selected.length < 3 || needsOtherDescription} helper={selected.length < 3 ? `${selected.length} de 3 selecionadas` : `${selected.length} ${selected.length === 1 ? 'selecionada' : 'selecionadas'}`}>
+      <SelectionCards options={DIAGNOSTIC_AREAS} selected={selected} onToggle={toggle} />
+      {selected.includes('outro') && (
+        <div className="diagnostic-other">
+          <label className="field-label" htmlFor="other-child-priority">Qual outro ponto você gostaria de desenvolver?</label>
+          <input id="other-child-priority" className="text-input" value={otherValue} onChange={(event) => setOtherValue(event.target.value)} placeholder="Conte em poucas palavras" />
+        </div>
+      )}
+    </StepShell>
+  );
+}
+
 function Motivation({ selected, setSelected, onNext, onBack, profile }) {
   const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   return (
-    <StepShell step={3} eyebrow="Motivação positiva" title={`O que costuma animar ${profile.name || 'sua criança'}?`} subtitle="Escolha todas as opções que combinam com sua criança. As recompensas serão sempre aprovadas por você." onBack={onBack} onNext={onNext} nextDisabled={!selected.length} helper={`${selected.length} ${selected.length === 1 ? 'selecionada' : 'selecionadas'}`}>
+    <StepShell step={4} eyebrow="Motivação positiva" title={`O que costuma animar ${profile.name || 'sua criança'}?`} subtitle="Escolha todas as opções que combinam com sua criança. As recompensas serão sempre aprovadas por você." onBack={onBack} onNext={onNext} nextDisabled={!selected.length} helper={`${selected.length} ${selected.length === 1 ? 'selecionada' : 'selecionadas'}`}>
       <div className="motivation-list">
         {MOTIVATIONS.map((item) => { const active = selected.includes(item.id); return <button type="button" className={`choice-card motivation-card ${active ? 'selected' : ''}`} key={item.id} onClick={() => toggle(item.id)}><Icon tone="mint">{item.icon}</Icon><span className="choice-copy"><strong>{item.title}</strong><small>{item.text}</small></span><Check active={active} /></button>; })}
       </div>
@@ -220,7 +253,7 @@ function Routine({ diagnosis, diagnosisOther, profile, onNext, onBack }) {
     return uniqueHabits.slice(0, 4).map(([name, icon], index) => ({ name, icon, points: index < 2 ? 4 : 3, time: index < 2 ? 'Manhã' : 'Fim do dia' }));
   }, [diagnosis, diagnosisOther]);
   return (
-    <StepShell step={4} eyebrow="Pronto para começar" title={`Criamos uma primeira rotina para ${profile.name || 'sua criança'}`} subtitle="Baseada nas suas respostas, ela começa simples e evolui com a família." onBack={onBack} onNext={onNext} nextLabel="Aprovar esta rotina">
+    <StepShell step={5} eyebrow="Pronto para começar" title={`Criamos uma primeira rotina para ${profile.name || 'sua criança'}`} subtitle="Baseada nas suas respostas, ela começa simples e evolui com a família." onBack={onBack} onNext={onNext} nextLabel="Aprovar esta rotina">
       <div className="routine-summary"><div><span className="big-avatar">{profile.avatar}</span><span><strong>{routine.length} hábitos</strong><small>aprox. 15 min por dia</small></span></div><span className="status-pill">Equilibrada</span></div>
       <div className="routine-list">
         {routine.map((item) => <div className="routine-item" key={item.name}><span className="routine-icon">{item.icon}</span><span className="routine-copy"><strong>{item.name}</strong><small>{item.time} · Todos os dias</small></span><span className="points">+{item.points} pts</span><button className="edit-button" type="button" aria-label={`Editar ${item.name}`} title={`Editar ${item.name}`}><span aria-hidden="true">✎</span></button></div>)}
@@ -270,6 +303,8 @@ function Complete({ profile, plan, trial, onRestart }) {
 function App() {
   const [step, setStep] = useState(0);
   const [profile, setProfile] = useState({ name: 'Zica', age: '6–8', gender: '', avatar: '🐱' });
+  const [parentPains, setParentPains] = useState([]);
+  const [parentOther, setParentOther] = useState('');
   const [diagnosis, setDiagnosis] = useState([]);
   const [diagnosisOther, setDiagnosisOther] = useState('');
   const [motivations, setMotivations] = useState(['together']);
@@ -288,16 +323,19 @@ function App() {
       commit();
     }
   };
-  const next = () => transitionTo(Math.min(step + 1, 6), 'forward');
+  const next = () => transitionTo(Math.min(step + 1, 7), 'forward');
   const back = () => transitionTo(Math.max(step - 1, 0), 'backward');
   const restart = () => transitionTo(0, 'backward', () => {
+    setParentPains([]);
+    setParentOther('');
     setDiagnosis([]);
     setDiagnosisOther('');
   });
   const screens = [
     <Welcome onNext={next} />,
-    <Priorities selected={diagnosis} setSelected={setDiagnosis} otherValue={diagnosisOther} setOtherValue={setDiagnosisOther} onNext={next} onBack={back} />,
+    <Priorities selected={parentPains} setSelected={setParentPains} otherValue={parentOther} setOtherValue={setParentOther} onNext={next} onBack={back} />,
     <ChildProfile profile={profile} setProfile={setProfile} onNext={next} onBack={back} />,
+    <ChildPriorities selected={diagnosis} setSelected={setDiagnosis} otherValue={diagnosisOther} setOtherValue={setDiagnosisOther} profile={profile} onNext={next} onBack={back} />,
     <Motivation selected={motivations} setSelected={setMotivations} profile={profile} onNext={next} onBack={back} />,
     <Routine diagnosis={diagnosis} diagnosisOther={diagnosisOther} profile={profile} onNext={next} onBack={back} />,
     <Paywall selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} trial={trial} setTrial={setTrial} onBack={back} onFinish={next} />,
