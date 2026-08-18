@@ -155,7 +155,7 @@ function ChildProfile({ profile, setProfile, onNext, onBack }) {
     { id: 'not-say', label: 'Prefiro não informar' },
   ];
   return (
-    <StepShell step={2} eyebrow="Sobre sua criança" title="Quem vai construir esses hábitos?" subtitle="Usaremos essas informações apenas para criar sugestões adequadas." onBack={onBack} onNext={onNext} nextDisabled={!profile.name.trim() || !profile.age || !profile.gender}>
+    <StepShell step={2} eyebrow="Sobre sua criança" title="Quem vai viver essa nova rotina com você?" subtitle="Usaremos essas informações apenas para criar sugestões adequadas." onBack={onBack} onNext={onNext} nextDisabled={!profile.name.trim() || !profile.age || !profile.gender}>
       <label className="field-label">Como podemos chamá-la?</label>
       <input className="text-input" value={profile.name} onChange={(event) => setProfile({ ...profile, name: event.target.value })} placeholder="Ex.: Zica" />
       <label className="field-label field-gap">Qual é a idade?</label>
