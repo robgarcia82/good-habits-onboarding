@@ -160,7 +160,7 @@ function QuickScan({ goals, answers, setAnswers, profile, onNext, onBack }) {
   ];
   const answered = habits.filter(([habit]) => answers[habit]).length;
   return (
-    <StepShell step={3} eyebrow="Diagnóstico rápido" title={`Como estão esses hábitos de ${profile.name || 'sua criança'}?`} subtitle="Não existe resposta certa. Isso leva menos de um minuto." onBack={onBack} onNext={onNext} nextDisabled={answered < Math.min(3, habits.length)} helper={`${answered} de ${habits.length} respondidos`}>
+    <StepShell step={3} eyebrow="Diagnóstico rápido" title={`Como estão esses hábitos de ${profile.name || 'sua criança'}?`} subtitle="Esta etapa é essencial para criarmos uma rotina que respeite o momento e o nível de autonomia do seu filho. Não existe resposta certa ou errada — em menos de 1 minuto, você nos ajuda a personalizar cada hábito." onBack={onBack} onNext={onNext} nextDisabled={answered < Math.min(3, habits.length)} helper={`${answered} de ${habits.length} respondidos`}>
       <div className="scan-list">
         {habits.map(([habit, icon]) => {
           const selectedIndex = sliderOptions.findIndex((option) => option.id === answers[habit]);
