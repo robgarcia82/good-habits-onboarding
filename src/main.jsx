@@ -44,6 +44,23 @@ const HABITS = {
   ],
 };
 
+const DIAGNOSTIC_AREAS = [
+  { id: 'higiene', icon: '🪥', label: 'Higiene e autocuidado', habit: ['Escovar os dentes pela manhã', '🪥'] },
+  { id: 'organizacao', icon: '🧸', label: 'Organização das próprias coisas', habit: ['Guardar os brinquedos', '🧸'] },
+  { id: 'estudos', icon: '📚', label: 'Estudos e tarefas escolares', habit: ['Começar a tarefa no horário', '✏️'] },
+  { id: 'horarios', icon: '⏰', label: 'Cumprimento de horários', habit: ['Preparar-se no horário combinado', '⏰'] },
+  { id: 'manha', icon: '🌅', label: 'Rotina da manhã', habit: ['Arrumar a cama ao acordar', '🌅'] },
+  { id: 'sono', icon: '🌙', label: 'Rotina noturna e sono', habit: ['Guardar as telas antes de dormir', '🌙'] },
+  { id: 'alimentacao', icon: '🍎', label: 'Alimentação', habit: ['Beber água ao longo do dia', '🍎'] },
+  { id: 'telas', icon: '📱', label: 'Uso equilibrado de telas', habit: ['Guardar as telas no horário combinado', '📵'] },
+  { id: 'casa', icon: '🏡', label: 'Participação nas tarefas da casa', habit: ['Ajudar em uma tarefa da casa', '🏡'] },
+  { id: 'responsabilidade', icon: '🌟', label: 'Independência e responsabilidade', habit: ['Cuidar dos próprios pertences', '🌟'] },
+  { id: 'familia', icon: '🤝', label: 'Convivência familiar', habit: ['Participar de um momento em família', '🤝'] },
+  { id: 'emocoes', icon: '💛', label: 'Reconhecimento e regulação das emoções', habit: ['Contar como está se sentindo', '💛'] },
+  { id: 'persistencia', icon: '💪', label: 'Persistência diante de dificuldades', habit: ['Tentar novamente antes de desistir', '💪'] },
+  { id: 'outro', icon: '✏️', label: 'Outro', habit: ['Novo hábito personalizado', '✏️'] },
+];
+
 const MOTIVATIONS = [
   { id: 'together', icon: '🤝', title: 'Tempo juntos', text: 'Brincar, cozinhar ou passear em família' },
   { id: 'choice', icon: '⭐', title: 'Poder escolher', text: 'Filme, sobremesa ou brincadeira' },
@@ -151,38 +168,37 @@ function ChildProfile({ profile, setProfile, onNext, onBack }) {
   );
 }
 
-function QuickScan({ goals, answers, setAnswers, profile, onNext, onBack }) {
-  const habits = useMemo(() => goals.flatMap((goal) => HABITS[goal] || []).slice(0, 6), [goals]);
-  const options = [
-    { id: 'not-yet', label: 'Ainda não' },
-    { id: 'help', label: 'Com ajuda' },
-    { id: 'alone', label: 'Sozinho' },
-  ];
-  const answered = habits.filter(([habit]) => answers[habit]).length;
+function QuickScan({ selected, setSelected, otherValue, setOtherValue, profile, onNext, onBack }) {
+  const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : current.length < 3 ? [...current, id] : current);
+  const needsOtherDescription = selected.includes('outro') && !otherValue.trim();
   return (
-    <StepShell step={3} eyebrow="Diagnóstico rápido" title={`Como estão esses hábitos de ${profile.name || 'sua criança'}?`} subtitle="Suas respostas criam uma rotina adequada ao seu filho. Não há certo ou errado — leva menos de 1 minuto." onBack={onBack} onNext={onNext} nextDisabled={answered < Math.min(3, habits.length)} helper={`${answered} de ${habits.length} respondidos`}>
-      <div className="scan-list">
-        {habits.map(([habit, icon]) => {
-          const selected = answers[habit];
-
-          return <div className={`habit-row ${selected ? 'answered' : ''}`} key={habit}>
-            <div className="habit-title"><span>{icon}</span><strong>{habit}</strong></div>
-            <div className="segment-control" role="group" aria-label={`Nível de autonomia para ${habit}`}>
-              {options.map((option) => (
-                <button
-                  type="button"
-                  key={option.id}
-                  className={selected === option.id ? 'selected' : ''}
-                  aria-pressed={selected === option.id}
-                  onClick={() => setAnswers({ ...answers, [habit]: option.id })}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>;
+    <StepShell step={3} eyebrow="Diagnóstico rápido" title={`O que você mais gostaria de melhorar na rotina de ${profile.name || 'sua criança'}?`} subtitle="Escolha até três áreas. Usaremos suas respostas para criar uma rotina inicial adequada ao seu filho." onBack={onBack} onNext={onNext} nextDisabled={!selected.length || needsOtherDescription} helper={`${selected.length} de 3 selecionadas`}>
+      <div className="diagnostic-options">
+        {DIAGNOSTIC_AREAS.map((area) => {
+          const active = selected.includes(area.id);
+          const unavailable = !active && selected.length >= 3;
+          return (
+            <button
+              type="button"
+              className={`diagnostic-chip ${active ? 'selected' : ''}`}
+              key={area.id}
+              onClick={() => toggle(area.id)}
+              aria-pressed={active}
+              disabled={unavailable}
+            >
+              <span className="diagnostic-emoji" aria-hidden="true">{area.icon}</span>
+              <span>{area.label}</span>
+              <Check active={active} />
+            </button>
+          );
         })}
       </div>
+      {selected.includes('outro') && (
+        <div className="diagnostic-other">
+          <label className="field-label" htmlFor="other-priority">O que você gostaria de melhorar?</label>
+          <input id="other-priority" className="text-input" value={otherValue} onChange={(event) => setOtherValue(event.target.value)} placeholder="Ex.: preparar-se para sair de casa" />
+        </div>
+      )}
     </StepShell>
   );
 }
@@ -199,8 +215,18 @@ function Motivation({ selected, setSelected, onNext, onBack, profile }) {
   );
 }
 
-function Routine({ goals, answers, profile, onNext, onBack }) {
-  const routine = useMemo(() => goals.flatMap((goal) => HABITS[goal] || []).slice(0, 4).map(([name, icon], index) => ({ name, icon, points: answers[name] === 'alone' ? 2 : index < 2 ? 4 : 3, time: index < 2 ? 'Manhã' : 'Fim do dia' })), [goals, answers]);
+function Routine({ goals, diagnosis, diagnosisOther, profile, onNext, onBack }) {
+  const routine = useMemo(() => {
+    const selectedHabits = diagnosis.map((id) => {
+      const area = DIAGNOSTIC_AREAS.find((item) => item.id === id);
+      if (!area) return null;
+      const [defaultName, icon] = area.habit;
+      return [id === 'outro' && diagnosisOther.trim() ? diagnosisOther.trim() : defaultName, icon];
+    }).filter(Boolean);
+    const fallbackHabits = goals.flatMap((goal) => HABITS[goal] || []);
+    const uniqueHabits = [...selectedHabits, ...fallbackHabits].filter(([name], index, list) => list.findIndex(([candidate]) => candidate === name) === index);
+    return uniqueHabits.slice(0, 4).map(([name, icon], index) => ({ name, icon, points: index < 2 ? 4 : 3, time: index < 2 ? 'Manhã' : 'Fim do dia' }));
+  }, [goals, diagnosis, diagnosisOther]);
   return (
     <StepShell step={5} eyebrow="Pronto para começar" title={`Criamos uma primeira rotina para ${profile.name || 'sua criança'}`} subtitle="Baseada nas suas respostas, ela começa simples e evolui com a família." onBack={onBack} onNext={onNext} nextLabel="Aprovar esta rotina">
       <div className="routine-summary"><div><span className="big-avatar">{profile.avatar}</span><span><strong>{routine.length} hábitos</strong><small>aprox. 15 min por dia</small></span></div><span className="status-pill">Equilibrada</span></div>
@@ -253,7 +279,8 @@ function App() {
   const [step, setStep] = useState(0);
   const [goals, setGoals] = useState(['higiene']);
   const [profile, setProfile] = useState({ name: 'Zica', age: '6–8', avatar: '🐱' });
-  const [answers, setAnswers] = useState({});
+  const [diagnosis, setDiagnosis] = useState([]);
+  const [diagnosisOther, setDiagnosisOther] = useState('');
   const [motivations, setMotivations] = useState(['together']);
   const [selectedPlan, setSelectedPlan] = useState('annual');
   const [trial, setTrial] = useState(true);
@@ -272,14 +299,17 @@ function App() {
   };
   const next = () => transitionTo(Math.min(step + 1, 7), 'forward');
   const back = () => transitionTo(Math.max(step - 1, 0), 'backward');
-  const restart = () => transitionTo(0, 'backward', () => setAnswers({}));
+  const restart = () => transitionTo(0, 'backward', () => {
+    setDiagnosis([]);
+    setDiagnosisOther('');
+  });
   const screens = [
     <Welcome onNext={next} />,
     <Goals selected={goals} setSelected={setGoals} onNext={next} onBack={back} />,
     <ChildProfile profile={profile} setProfile={setProfile} onNext={next} onBack={back} />,
-    <QuickScan goals={goals} answers={answers} setAnswers={setAnswers} profile={profile} onNext={next} onBack={back} />,
+    <QuickScan selected={diagnosis} setSelected={setDiagnosis} otherValue={diagnosisOther} setOtherValue={setDiagnosisOther} profile={profile} onNext={next} onBack={back} />,
     <Motivation selected={motivations} setSelected={setMotivations} profile={profile} onNext={next} onBack={back} />,
-    <Routine goals={goals} answers={answers} profile={profile} onNext={next} onBack={back} />,
+    <Routine goals={goals} diagnosis={diagnosis} diagnosisOther={diagnosisOther} profile={profile} onNext={next} onBack={back} />,
     <Paywall selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} trial={trial} setTrial={setTrial} onBack={back} onFinish={next} />,
     <Complete profile={profile} plan={PLANS.find((item) => item.id === selectedPlan)?.name} trial={trial} onRestart={restart} />,
   ];

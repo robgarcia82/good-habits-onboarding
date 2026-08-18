@@ -76,14 +76,15 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(26px, 7vw, 32px); line-heigh
 .avatar-button.selected { border-color: var(--violet); background: var(--violet-soft); box-shadow: inset 0 0 0 1px var(--violet); animation: avatarBounce .45s cubic-bezier(.2,.9,.3,1.35); }
 .privacy-note { margin-top: 18px; color: var(--muted); font-size: 12px; }
 
-.scan-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
-.habit-row { padding: 14px 14px 11px; border: 1px solid var(--line); background: #fff; border-radius: 16px; transition: border-color .25s ease, box-shadow .25s ease, background .25s ease; }
-.habit-row.answered { border-color: #d3cdf5; background: linear-gradient(180deg, #fff, #fcfbff); box-shadow: 0 6px 18px rgba(74,60,140,.06); }
-.habit-title { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 13px; min-width: 0; }
-.habit-title strong { line-height: 1.25; }
-.segment-control { display: grid; grid-template-columns: repeat(3, 1fr); padding: 3px; gap: 3px; border-radius: 11px; background: var(--soft); }
-.segment-control button { min-height: 35px; border: 0; background: transparent; border-radius: 9px; font-size: 10px; font-weight: 750; cursor: pointer; color: var(--muted); }
-.segment-control button.selected { background: #fff; color: var(--violet-dark); box-shadow: 0 2px 8px rgba(50,42,90,.12); animation: segmentSelect .26s cubic-bezier(.2,.85,.3,1.2); }
+.diagnostic-options { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+.diagnostic-chip { min-height: 44px; max-width: 100%; flex: 1 1 auto; padding: 9px 11px; display: flex; align-items: center; gap: 7px; border: 1.5px solid var(--line); border-radius: 14px; background: #fff; color: var(--muted); text-align: left; cursor: pointer; font-size: 11px; font-weight: 800; line-height: 1.25; transition: border-color .18s ease, background .18s ease, color .18s ease, transform .18s ease, opacity .18s ease; animation: itemRise .38s cubic-bezier(.2,.8,.2,1) both; }
+.diagnostic-chip:hover:not(:disabled) { border-color: #c9c3ec; transform: translateY(-1px); }
+.diagnostic-chip.selected { border-color: var(--violet); background: var(--violet-soft); color: var(--violet-dark); box-shadow: inset 0 0 0 1px var(--violet); animation: selectPop .3s cubic-bezier(.2,.9,.3,1.35); }
+.diagnostic-chip:disabled { opacity: .42; cursor: not-allowed; }
+.diagnostic-chip > span:nth-child(2) { flex: 1; }
+.diagnostic-chip .check { width: 19px; height: 19px; flex-basis: 19px; }
+.diagnostic-emoji { font-size: 16px; }
+.diagnostic-other { margin-top: 18px; padding: 14px; border-radius: 15px; background: var(--soft); animation: itemRise .35s cubic-bezier(.2,.8,.2,1) both; }
 
 .motivation-list { display: grid; grid-template-columns: 1fr; gap: 11px; }
 .motivation-card { padding: 13px; gap: 12px; }
@@ -209,7 +210,6 @@ html[data-direction="backward"]::view-transition-new(onboarding-screen) { animat
 @keyframes selectPop { 50% { transform: scale(1.025); } }
 @keyframes checkPop { 0% { transform: scale(.35) rotate(-20deg); } 70% { transform: scale(1.15) rotate(4deg); } }
 @keyframes avatarBounce { 45% { transform: translateY(-5px) scale(1.08) rotate(-3deg); } }
-@keyframes segmentSelect { from { transform: scale(.92); opacity: .65; } }
 @keyframes progressShine { to { transform: translateX(120%); } }
 @keyframes ctaShine { 0%, 62% { transform: rotate(18deg) translateX(-300%); } 82%, 100% { transform: rotate(18deg) translateX(850%); } }
 @keyframes mascotFloat { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-8px) rotate(2deg); } }
@@ -222,12 +222,12 @@ html[data-direction="backward"]::view-transition-new(onboarding-screen) { animat
 @keyframes confettiIn { from { opacity: 0; transform: translateY(-18px) scale(.7); letter-spacing: 18px; } to { opacity: 1; transform: none; letter-spacing: 8px; } }
 @keyframes rotate { to { transform: rotate(360deg); } }
 
-.goal-card, .habit-row, .motivation-card, .plan-card { animation: itemRise .45s cubic-bezier(.2,.8,.2,1) both; }
-.goal-card:nth-child(2), .habit-row:nth-child(2), .motivation-card:nth-child(2), .plan-card:nth-child(2) { animation-delay: .06s; }
-.goal-card:nth-child(3), .habit-row:nth-child(3), .motivation-card:nth-child(3), .plan-card:nth-child(3) { animation-delay: .12s; }
-.goal-card:nth-child(4), .habit-row:nth-child(4), .motivation-card:nth-child(4) { animation-delay: .18s; }
-.goal-card:nth-child(5), .habit-row:nth-child(5) { animation-delay: .24s; }
-.goal-card:nth-child(6), .habit-row:nth-child(6) { animation-delay: .3s; }
+.goal-card, .motivation-card, .plan-card { animation: itemRise .45s cubic-bezier(.2,.8,.2,1) both; }
+.goal-card:nth-child(2), .motivation-card:nth-child(2), .plan-card:nth-child(2) { animation-delay: .06s; }
+.goal-card:nth-child(3), .motivation-card:nth-child(3), .plan-card:nth-child(3) { animation-delay: .12s; }
+.goal-card:nth-child(4), .motivation-card:nth-child(4) { animation-delay: .18s; }
+.goal-card:nth-child(5) { animation-delay: .24s; }
+.goal-card:nth-child(6) { animation-delay: .3s; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
@@ -240,7 +240,7 @@ html[data-direction="backward"]::view-transition-new(onboarding-screen) { animat
   .topbar, .paywall-top { padding: 18px 18px 10px; }
   .progress-track { width: calc(100% - 40px); }
   .screen-content, .paywall-content { padding: 26px 22px 116px; }
-  .goal-grid, .scan-list, .motivation-list, .routine-list { grid-template-columns: 1fr; }
+  .goal-grid, .motivation-list, .routine-list { grid-template-columns: 1fr; }
   .goal-grid { grid-template-columns: 1fr 1fr; }
   .welcome-screen { padding: 28px 23px 24px; display: flex; flex-direction: column; }
   .welcome-copy { margin-top: auto; display: block; }
