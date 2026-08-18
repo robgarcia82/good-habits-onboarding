@@ -2,15 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
-const GOALS = [
-  { id: 'higiene', icon: '🪥', label: 'Higiene e autocuidado' },
-  { id: 'organizacao', icon: '🧸', label: 'Organização' },
-  { id: 'estudos', icon: '📚', label: 'Estudos' },
-  { id: 'sono', icon: '🌙', label: 'Sono e rotina' },
-  { id: 'alimentacao', icon: '🍎', label: 'Alimentação' },
-  { id: 'autonomia', icon: '🌱', label: 'Autonomia' },
-];
-
 const HABITS = {
   higiene: [
     ['Escovar os dentes pela manhã', '🪥'],
@@ -91,12 +82,12 @@ function Check({ active }) {
 }
 
 function StepShell({ step, title, eyebrow, subtitle, children, onBack, onNext, nextLabel = 'Continuar', nextDisabled = false, helper }) {
-  const progress = Math.max(0, Math.min(100, (step / 5) * 100));
+  const progress = Math.max(0, Math.min(100, (step / 4) * 100));
   return (
     <main className="app-shell">
       <div className="topbar">
         <BackButton onClick={onBack} />
-        <span className="step-count">Etapa {step} de 5</span>
+        <span className="step-count">Etapa {step} de 4</span>
         <button className="text-button" type="button" onClick={onNext}>Responder depois</button>
       </div>
       <div className="progress-track" aria-hidden="true"><span style={{ width: `${progress}%` }} /></div>
@@ -140,21 +131,6 @@ function Welcome({ onNext }) {
   );
 }
 
-function Goals({ selected, setSelected, onNext, onBack }) {
-  const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : current.length < 3 ? [...current, id] : current);
-  return (
-    <StepShell step={1} eyebrow="Vamos começar pelo que importa" title="O que deixaria a rotina mais leve hoje?" subtitle="Escolha até três áreas. Você poderá adicionar outras quando quiser." onBack={onBack} onNext={onNext} nextDisabled={!selected.length} helper={`${selected.length} de 3 selecionadas`}>
-      <div className="goal-grid">
-        {GOALS.map((goal) => {
-          const active = selected.includes(goal.id);
-          return <button type="button" className={`choice-card goal-card ${active ? 'selected' : ''}`} onClick={() => toggle(goal.id)} key={goal.id}><Icon>{goal.icon}</Icon><span>{goal.label}</span><Check active={active} /></button>;
-        })}
-      </div>
-      <div className="insight-box"><span>✨</span><p><strong>Uma coisa de cada vez.</strong><br />Começar com poucas áreas aumenta as chances de a nova rotina funcionar.</p></div>
-    </StepShell>
-  );
-}
-
 function ChildProfile({ profile, setProfile, onNext, onBack }) {
   const genderOptions = [
     { id: 'boy', icon: '👦', label: 'Menino' },
@@ -186,11 +162,11 @@ function ChildProfile({ profile, setProfile, onNext, onBack }) {
   );
 }
 
-function QuickScan({ selected, setSelected, otherValue, setOtherValue, profile, onNext, onBack }) {
+function Priorities({ selected, setSelected, otherValue, setOtherValue, onNext, onBack }) {
   const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   const needsOtherDescription = selected.includes('outro') && !otherValue.trim();
   return (
-    <StepShell step={3} eyebrow="Diagnóstico rápido" title={`O que você mais gostaria de melhorar na rotina de ${profile.name || 'sua criança'}?`} subtitle="Escolha pelo menos três áreas. Você pode selecionar quantas quiser." onBack={onBack} onNext={onNext} nextDisabled={selected.length < 3 || needsOtherDescription} helper={selected.length < 3 ? `${selected.length} de 3 selecionadas` : `${selected.length} ${selected.length === 1 ? 'selecionada' : 'selecionadas'}`}>
+    <StepShell step={1} eyebrow="Vamos começar pelo que importa" title="O que você mais gostaria de melhorar na rotina da sua criança?" subtitle="Escolha pelo menos três áreas. Você pode selecionar quantas quiser." onBack={onBack} onNext={onNext} nextDisabled={selected.length < 3 || needsOtherDescription} helper={selected.length < 3 ? `${selected.length} de 3 selecionadas` : `${selected.length} ${selected.length === 1 ? 'selecionada' : 'selecionadas'}`}>
       <div className="diagnostic-options">
         {DIAGNOSTIC_AREAS.map((area) => {
           const active = selected.includes(area.id);
@@ -222,7 +198,7 @@ function QuickScan({ selected, setSelected, otherValue, setOtherValue, profile, 
 function Motivation({ selected, setSelected, onNext, onBack, profile }) {
   const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   return (
-    <StepShell step={4} eyebrow="Motivação positiva" title={`O que costuma animar ${profile.name || 'sua criança'}?`} subtitle="Escolha todas as opções que combinam com sua criança. As recompensas serão sempre aprovadas por você." onBack={onBack} onNext={onNext} nextDisabled={!selected.length} helper={`${selected.length} ${selected.length === 1 ? 'selecionada' : 'selecionadas'}`}>
+    <StepShell step={3} eyebrow="Motivação positiva" title={`O que costuma animar ${profile.name || 'sua criança'}?`} subtitle="Escolha todas as opções que combinam com sua criança. As recompensas serão sempre aprovadas por você." onBack={onBack} onNext={onNext} nextDisabled={!selected.length} helper={`${selected.length} ${selected.length === 1 ? 'selecionada' : 'selecionadas'}`}>
       <div className="motivation-list">
         {MOTIVATIONS.map((item) => { const active = selected.includes(item.id); return <button type="button" className={`choice-card motivation-card ${active ? 'selected' : ''}`} key={item.id} onClick={() => toggle(item.id)}><Icon tone="mint">{item.icon}</Icon><span className="choice-copy"><strong>{item.title}</strong><small>{item.text}</small></span><Check active={active} /></button>; })}
       </div>
@@ -231,7 +207,7 @@ function Motivation({ selected, setSelected, onNext, onBack, profile }) {
   );
 }
 
-function Routine({ goals, diagnosis, diagnosisOther, profile, onNext, onBack }) {
+function Routine({ diagnosis, diagnosisOther, profile, onNext, onBack }) {
   const routine = useMemo(() => {
     const selectedHabits = diagnosis.map((id) => {
       const area = DIAGNOSTIC_AREAS.find((item) => item.id === id);
@@ -239,12 +215,12 @@ function Routine({ goals, diagnosis, diagnosisOther, profile, onNext, onBack }) 
       const [defaultName, icon] = area.habit;
       return [id === 'outro' && diagnosisOther.trim() ? diagnosisOther.trim() : defaultName, icon];
     }).filter(Boolean);
-    const fallbackHabits = goals.flatMap((goal) => HABITS[goal] || []);
+    const fallbackHabits = [...diagnosis.flatMap((area) => HABITS[area] || []), ...Object.values(HABITS).flat()];
     const uniqueHabits = [...selectedHabits, ...fallbackHabits].filter(([name], index, list) => list.findIndex(([candidate]) => candidate === name) === index);
     return uniqueHabits.slice(0, 4).map(([name, icon], index) => ({ name, icon, points: index < 2 ? 4 : 3, time: index < 2 ? 'Manhã' : 'Fim do dia' }));
-  }, [goals, diagnosis, diagnosisOther]);
+  }, [diagnosis, diagnosisOther]);
   return (
-    <StepShell step={5} eyebrow="Pronto para começar" title={`Criamos uma primeira rotina para ${profile.name || 'sua criança'}`} subtitle="Baseada nas suas respostas, ela começa simples e evolui com a família." onBack={onBack} onNext={onNext} nextLabel="Aprovar esta rotina">
+    <StepShell step={4} eyebrow="Pronto para começar" title={`Criamos uma primeira rotina para ${profile.name || 'sua criança'}`} subtitle="Baseada nas suas respostas, ela começa simples e evolui com a família." onBack={onBack} onNext={onNext} nextLabel="Aprovar esta rotina">
       <div className="routine-summary"><div><span className="big-avatar">{profile.avatar}</span><span><strong>{routine.length} hábitos</strong><small>aprox. 15 min por dia</small></span></div><span className="status-pill">Equilibrada</span></div>
       <div className="routine-list">
         {routine.map((item) => <div className="routine-item" key={item.name}><span className="routine-icon">{item.icon}</span><span className="routine-copy"><strong>{item.name}</strong><small>{item.time} · Todos os dias</small></span><span className="points">+{item.points} pts</span><button className="edit-button" type="button" aria-label={`Editar ${item.name}`} title={`Editar ${item.name}`}><span aria-hidden="true">✎</span></button></div>)}
@@ -293,7 +269,6 @@ function Complete({ profile, plan, trial, onRestart }) {
 
 function App() {
   const [step, setStep] = useState(0);
-  const [goals, setGoals] = useState(['higiene']);
   const [profile, setProfile] = useState({ name: 'Zica', age: '6–8', gender: '', avatar: '🐱' });
   const [diagnosis, setDiagnosis] = useState([]);
   const [diagnosisOther, setDiagnosisOther] = useState('');
@@ -313,7 +288,7 @@ function App() {
       commit();
     }
   };
-  const next = () => transitionTo(Math.min(step + 1, 7), 'forward');
+  const next = () => transitionTo(Math.min(step + 1, 6), 'forward');
   const back = () => transitionTo(Math.max(step - 1, 0), 'backward');
   const restart = () => transitionTo(0, 'backward', () => {
     setDiagnosis([]);
@@ -321,11 +296,10 @@ function App() {
   });
   const screens = [
     <Welcome onNext={next} />,
-    <Goals selected={goals} setSelected={setGoals} onNext={next} onBack={back} />,
+    <Priorities selected={diagnosis} setSelected={setDiagnosis} otherValue={diagnosisOther} setOtherValue={setDiagnosisOther} onNext={next} onBack={back} />,
     <ChildProfile profile={profile} setProfile={setProfile} onNext={next} onBack={back} />,
-    <QuickScan selected={diagnosis} setSelected={setDiagnosis} otherValue={diagnosisOther} setOtherValue={setDiagnosisOther} profile={profile} onNext={next} onBack={back} />,
     <Motivation selected={motivations} setSelected={setMotivations} profile={profile} onNext={next} onBack={back} />,
-    <Routine goals={goals} diagnosis={diagnosis} diagnosisOther={diagnosisOther} profile={profile} onNext={next} onBack={back} />,
+    <Routine diagnosis={diagnosis} diagnosisOther={diagnosisOther} profile={profile} onNext={next} onBack={back} />,
     <Paywall selectedPlan={selectedPlan} setSelectedPlan={setSelectedPlan} trial={trial} setTrial={setTrial} onBack={back} onFinish={next} />,
     <Complete profile={profile} plan={PLANS.find((item) => item.id === selectedPlan)?.name} trial={trial} onRestart={restart} />,
   ];

@@ -51,9 +51,6 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(26px, 7vw, 32px); line-heigh
 .choice-card { width: 100%; border: 1.5px solid var(--line); background: #fff; border-radius: 16px; cursor: pointer; display: flex; align-items: center; text-align: left; transition: border .18s ease, background .18s ease, transform .18s ease; }
 .choice-card:hover { transform: translateY(-1px); border-color: #c9c3ec; }
 .choice-card.selected { border-color: var(--violet); background: var(--violet-soft); box-shadow: inset 0 0 0 1px var(--violet); animation: selectPop .3s cubic-bezier(.2,.9,.3,1.35); }
-.goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.goal-card { min-height: 112px; padding: 14px; position: relative; flex-direction: column; align-items: flex-start; justify-content: space-between; font-size: 13px; font-weight: 800; }
-.goal-card .check { position: absolute; top: 12px; right: 12px; }
 .icon-badge { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--violet-soft); font-size: 20px; }
 .icon-badge.mint { background: var(--mint-soft); }
 .check { width: 21px; height: 21px; border: 1.5px solid #d9d5e5; background: #fff; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 12px; flex: 0 0 auto; }
@@ -229,12 +226,10 @@ html[data-direction="backward"]::view-transition-new(onboarding-screen) { animat
 @keyframes confettiIn { from { opacity: 0; transform: translateY(-18px) scale(.7); letter-spacing: 18px; } to { opacity: 1; transform: none; letter-spacing: 8px; } }
 @keyframes rotate { to { transform: rotate(360deg); } }
 
-.goal-card, .motivation-card, .plan-card { animation: itemRise .45s cubic-bezier(.2,.8,.2,1) both; }
-.goal-card:nth-child(2), .motivation-card:nth-child(2), .plan-card:nth-child(2) { animation-delay: .06s; }
-.goal-card:nth-child(3), .motivation-card:nth-child(3), .plan-card:nth-child(3) { animation-delay: .12s; }
-.goal-card:nth-child(4), .motivation-card:nth-child(4) { animation-delay: .18s; }
-.goal-card:nth-child(5) { animation-delay: .24s; }
-.goal-card:nth-child(6) { animation-delay: .3s; }
+.motivation-card, .plan-card { animation: itemRise .45s cubic-bezier(.2,.8,.2,1) both; }
+.motivation-card:nth-child(2), .plan-card:nth-child(2) { animation-delay: .06s; }
+.motivation-card:nth-child(3), .plan-card:nth-child(3) { animation-delay: .12s; }
+.motivation-card:nth-child(4) { animation-delay: .18s; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; }
@@ -247,8 +242,7 @@ html[data-direction="backward"]::view-transition-new(onboarding-screen) { animat
   .topbar, .paywall-top { padding: 18px 18px 10px; }
   .progress-track { width: calc(100% - 40px); }
   .screen-content, .paywall-content { padding: 26px 22px 116px; }
-  .goal-grid, .motivation-list, .routine-list { grid-template-columns: 1fr; }
-  .goal-grid { grid-template-columns: 1fr 1fr; }
+  .motivation-list, .routine-list { grid-template-columns: 1fr; }
   .welcome-screen { padding: 28px 23px 24px; display: flex; flex-direction: column; }
   .welcome-copy { margin-top: auto; display: block; }
   .welcome-copy h1 { font-size: 37px; max-width: 360px; }
