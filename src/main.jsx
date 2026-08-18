@@ -169,14 +169,13 @@ function ChildProfile({ profile, setProfile, onNext, onBack }) {
 }
 
 function QuickScan({ selected, setSelected, otherValue, setOtherValue, profile, onNext, onBack }) {
-  const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : current.length < 3 ? [...current, id] : current);
+  const toggle = (id) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   const needsOtherDescription = selected.includes('outro') && !otherValue.trim();
   return (
-    <StepShell step={3} eyebrow="Diagnóstico rápido" title={`O que você mais gostaria de melhorar na rotina de ${profile.name || 'sua criança'}?`} subtitle="Escolha até três áreas. Usaremos suas respostas para criar uma rotina inicial adequada ao seu filho." onBack={onBack} onNext={onNext} nextDisabled={!selected.length || needsOtherDescription} helper={`${selected.length} de 3 selecionadas`}>
+    <StepShell step={3} eyebrow="Diagnóstico rápido" title={`O que você mais gostaria de melhorar na rotina de ${profile.name || 'sua criança'}?`} subtitle="Escolha pelo menos três áreas. Você pode selecionar quantas quiser." onBack={onBack} onNext={onNext} nextDisabled={selected.length < 3 || needsOtherDescription} helper={selected.length < 3 ? `${selected.length} de 3 selecionadas` : `${selected.length} ${selected.length === 1 ? 'selecionada' : 'selecionadas'}`}>
       <div className="diagnostic-options">
         {DIAGNOSTIC_AREAS.map((area) => {
           const active = selected.includes(area.id);
-          const unavailable = !active && selected.length >= 3;
           return (
             <button
               type="button"
@@ -184,7 +183,6 @@ function QuickScan({ selected, setSelected, otherValue, setOtherValue, profile, 
               key={area.id}
               onClick={() => toggle(area.id)}
               aria-pressed={active}
-              disabled={unavailable}
             >
               <span className="diagnostic-emoji" aria-hidden="true">{area.icon}</span>
               <span>{area.label}</span>

@@ -76,14 +76,14 @@ h1 { margin: 0; color: var(--ink); font-size: clamp(26px, 7vw, 32px); line-heigh
 .avatar-button.selected { border-color: var(--violet); background: var(--violet-soft); box-shadow: inset 0 0 0 1px var(--violet); animation: avatarBounce .45s cubic-bezier(.2,.9,.3,1.35); }
 .privacy-note { margin-top: 18px; color: var(--muted); font-size: 12px; }
 
-.diagnostic-options { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
-.diagnostic-chip { min-height: 44px; max-width: 100%; flex: 1 1 auto; padding: 9px 11px; display: flex; align-items: center; gap: 7px; border: 1.5px solid var(--line); border-radius: 14px; background: #fff; color: var(--muted); text-align: left; cursor: pointer; font-size: 11px; font-weight: 800; line-height: 1.25; transition: border-color .18s ease, background .18s ease, color .18s ease, transform .18s ease, opacity .18s ease; animation: itemRise .38s cubic-bezier(.2,.8,.2,1) both; }
-.diagnostic-chip:hover:not(:disabled) { border-color: #c9c3ec; transform: translateY(-1px); }
+.diagnostic-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+.diagnostic-chip { min-height: 108px; padding: 12px; position: relative; display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; align-items: start; gap: 9px; border: 1.5px solid var(--line); border-radius: 17px; background: #fff; color: var(--muted); text-align: left; cursor: pointer; font-size: 11px; font-weight: 800; line-height: 1.3; transition: border-color .18s ease, background .18s ease, color .18s ease, transform .18s ease, box-shadow .18s ease; animation: itemRise .38s cubic-bezier(.2,.8,.2,1) both; }
+.diagnostic-chip:hover { border-color: #c9c3ec; box-shadow: 0 7px 18px rgba(74,60,140,.07); transform: translateY(-2px); }
 .diagnostic-chip.selected { border-color: var(--violet); background: var(--violet-soft); color: var(--violet-dark); box-shadow: inset 0 0 0 1px var(--violet); animation: selectPop .3s cubic-bezier(.2,.9,.3,1.35); }
-.diagnostic-chip:disabled { opacity: .42; cursor: not-allowed; }
-.diagnostic-chip > span:nth-child(2) { flex: 1; }
+.diagnostic-chip > span:nth-child(2) { grid-column: 1 / -1; align-self: end; }
 .diagnostic-chip .check { width: 19px; height: 19px; flex-basis: 19px; }
-.diagnostic-emoji { font-size: 16px; }
+.diagnostic-emoji { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; background: var(--soft); font-size: 18px; }
+.diagnostic-chip.selected .diagnostic-emoji { background: #fff; }
 .diagnostic-other { margin-top: 18px; padding: 14px; border-radius: 15px; background: var(--soft); animation: itemRise .35s cubic-bezier(.2,.8,.2,1) both; }
 
 .motivation-list { display: grid; grid-template-columns: 1fr; gap: 11px; }
