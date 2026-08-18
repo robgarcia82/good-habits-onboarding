@@ -156,13 +156,31 @@ function Goals({ selected, setSelected, onNext, onBack }) {
 }
 
 function ChildProfile({ profile, setProfile, onNext, onBack }) {
+  const genderOptions = [
+    { id: 'boy', icon: '👦', label: 'Menino' },
+    { id: 'girl', icon: '👧', label: 'Menina' },
+    { id: 'not-say', label: 'Prefiro não informar' },
+  ];
   return (
-    <StepShell step={2} eyebrow="Sobre sua criança" title="Quem vai construir esses hábitos?" subtitle="Usaremos a idade apenas para criar sugestões adequadas." onBack={onBack} onNext={onNext} nextDisabled={!profile.name.trim() || !profile.age}>
+    <StepShell step={2} eyebrow="Sobre sua criança" title="Quem vai construir esses hábitos?" subtitle="Usaremos essas informações apenas para criar sugestões adequadas." onBack={onBack} onNext={onNext} nextDisabled={!profile.name.trim() || !profile.age || !profile.gender}>
       <label className="field-label">Como podemos chamá-la?</label>
       <input className="text-input" value={profile.name} onChange={(event) => setProfile({ ...profile, name: event.target.value })} placeholder="Ex.: Zica" />
       <label className="field-label field-gap">Qual é a idade?</label>
       <div className="age-row">
         {['3–5', '6–8', '9–11', '12+'].map((age) => <button type="button" key={age} className={`pill ${profile.age === age ? 'selected' : ''}`} onClick={() => setProfile({ ...profile, age })}>{age} anos</button>)}
+      </div>
+      <label className="field-label field-gap">Qual é o gênero?</label>
+      <div className="gender-row" role="group" aria-label="Gênero da criança">
+        {genderOptions.map((option) => {
+          const active = profile.gender === option.id;
+          return (
+            <button type="button" key={option.id} className={`gender-card ${!option.icon ? 'neutral' : ''} ${active ? 'selected' : ''}`} onClick={() => setProfile({ ...profile, gender: option.id })} aria-pressed={active}>
+              {option.icon && <span className="gender-icon" aria-hidden="true">{option.icon}</span>}
+              <span>{option.label}</span>
+              <Check active={active} />
+            </button>
+          );
+        })}
       </div>
     </StepShell>
   );
@@ -276,7 +294,7 @@ function Complete({ profile, plan, trial, onRestart }) {
 function App() {
   const [step, setStep] = useState(0);
   const [goals, setGoals] = useState(['higiene']);
-  const [profile, setProfile] = useState({ name: 'Zica', age: '6–8', avatar: '🐱' });
+  const [profile, setProfile] = useState({ name: 'Zica', age: '6–8', gender: '', avatar: '🐱' });
   const [diagnosis, setDiagnosis] = useState([]);
   const [diagnosisOther, setDiagnosisOther] = useState('');
   const [motivations, setMotivations] = useState(['together']);
